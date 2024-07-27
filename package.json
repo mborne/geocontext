@@ -1,0 +1,32 @@
+{
+  "name": "geocontext",
+  "version": "0.1.0",
+  "description": "An experimental API providing spatial context for LLM",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mborne/geocontext.git"
+  },
+  "keywords": [
+    "llm",
+    "rag",
+    "action",
+    "spatial",
+    "context"
+  ],
+  "author": "MBorne <mborne@users.noreply.github.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mborne/geocontext/issues"
+  },
+  "homepage": "https://github.com/mborne/geocontext#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-validator": "^7.1.0",
+    "morgan": "^1.10.0",
+    "winston": "^3.13.1"
+  }
+}

@@ -1,0 +1,91 @@
+openapi: 3.1.0
+info:
+  title: geocontext
+  description: |-
+    An experimental API providing spatial context for LLM.
+  license:
+    name: MIT
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.1.0
+
+#servers:
+#  - url: https://geocontext.quadtreeworld.net
+
+externalDocs:
+  description: GitHub repository
+  url: https://github.com/mborne/geocontext#readme
+
+tags:
+  - name: altitude
+    description: Provide information about elevation.
+paths:
+
+  /api/altitude:
+    get:
+      tags:
+        - altitude
+      summary: Provides the altitude of a location given by its longitude and latitude.
+      description: Provides the altitude of a location given by its longitude and latitude.
+      operationId: altitude
+      parameters:
+        - in: query
+          name: lon
+          required: true
+          description: the longitude of a location
+          example: 6.869433
+          schema:
+            type: number
+        - in: query
+          name: lat
+          required: true
+          description: the latitude of a location
+          example: 45.923697
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AltitudeResponse'
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '500':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AltitudeResponse'
+
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "An error occurred"
+    BadRequestResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          examples: ["Invalid request parameters"]
+    AltitudeResponse:
+      type: object
+      properties:
+        lon:
+          type: number
+          description: The longitude of the point (input)
+        lat:
+          type: number
+          description: The latitude of the point (input)
+        altitude:
+          type: number
+          description: The altitude of the point (output)
