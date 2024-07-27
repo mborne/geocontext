@@ -4,24 +4,26 @@ An **experimental** API providing spatial context for LLM.
 
 ## Motivation
 
-REST/GeoJSON API can be invoked by LLMs for RAG purpose. Meanwhile :
+REST/GeoJSON API can be invoked by LLMs for RAG purpose. Meanwhile, trying to integrate the use [apicarto.ign.fr](https://apicarto.ign.fr) from IGNF in ChatGPT leads to consider the following points (see [apicarto - issue #109 (french)](https://github.com/IGNF/apicarto/issues/109)) :
 
-* Some input params are not relevant (ex : search geom instead of lon,lat) and default values are not adapted (ex : there is no reason to define defaults limits to 5000 features)
-* There is no need for complexe geometries in responses leading to ResponseTooLargeError with ChatGPT
-* Thus, there is no need to produce "GeoJSON Feature" with id, properties and a geometry put on a pedestal
+* Some **input params** are not relevant (too many options, GeoJSON input geom instead vs lon,lat,...)
+* Some **default values** are not adapted (there is no reason to define defaults limits to 5000 features)
+* **Large GeoJSON polygons** in API responses are **not relevant** and leads to **ResponseTooLargeError** with ChatGPT.
+* There is **no need to produce GeoJSON Feature** with id, properties and a geometry put on a pedestal.
 * ...
 
-This is an attempt to create a "facade" over existing webservices to ease usage with LLM.
+This is an attempt to create a "facade" over existing spatial services to ease usage with LLM.
 
 ## Principles
 
-* No geocoding (as ChatGPT already use multiple sources to find lon,lat for a given location)
-* No large geometries in responses (bbox instead?)
+* No geocoding (as ChatGPT already use multiple sources to find lon,lat for a given location).
+* No large geometries in responses.
 * JSON responses as flat as possible (no GeoJSON Feature or FeatureCollection)
+* Integration of [geoservices](https://geoservices.ign.fr/services-web) from [Géoplateforme](https://www.ign.fr/geoplateforme) first.
 
 ## Features
 
-See [OpenAPI specifications](public/geocontext.yaml)
+See [OpenAPI specifications](public/geocontext.yaml).
 
 ## Credits
 
