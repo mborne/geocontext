@@ -30,7 +30,7 @@ app.get('/health', function (req, res) {
     })
 });
 
-import { getAltitudeByLocation } from './services/geoplateforme.js';
+import { getAdminUnits, getAltitudeByLocation } from './services/geoplateforme.js';
 
 app.get('/api/altitude', [
     query("lon").notEmpty().isNumeric(),
@@ -49,20 +49,22 @@ app.get('/api/altitude', [
     return res.json(result);
 });
 
-
-/*
-export async function getCommune(location: Coordinate): Promise<FeatureCommune|null> {
-    const cql_filter = `INTERSECTS(geom,Point(${location.lat} ${location.lon}))`;
-    const url = `https://data.geopf.fr/wfs?service=WFS&request=GetFeature&typeName=ADMINEXPRESS-COG.LATEST:commune&outputFormat=application/json&cql_filter=${encodeURI(cql_filter)}`;
-    const featureCollection = await fetch(url).then(res => res.json());
-    if ( featureCollection.features.length == 0 ){
-        return null;
+app.get('/api/adminexpress', [
+    query("lon").notEmpty().isNumeric(),
+    query("lat").notEmpty().isNumeric()
+], async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).send({
+            message: "invalid parameters",
+            errors: errors.array()
+        });
     }
-    
-    let feature : FeatureCommune = featureCollection.features[0];
-    return feature;
-}
-*/
+
+    const params = matchedData(req);
+    const result = await getAdminUnits(params.lon, params.lat);
+    return res.json(result);
+});
 
 
 export default app;

@@ -1,6 +1,4 @@
-FROM node:20-alpine as builder
-
-RUN apk add --no-cache stress-ng
+FROM node:20-alpine
 
 RUN mkdir /opt/geocontext
 WORKDIR /opt/geocontext

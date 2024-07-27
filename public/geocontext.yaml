@@ -2,7 +2,7 @@ openapi: 3.1.0
 info:
   title: geocontext
   description: |-
-    An experimental API providing spatial context for LLM.
+    An **experimental** API providing spatial context for LLM.
   license:
     name: MIT
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -26,7 +26,7 @@ paths:
         - altitude
       summary: Provides the altitude of a location given by its longitude and latitude.
       description: Provides the altitude of a location given by its longitude and latitude.
-      operationId: altitude
+      operationId: getAltitude
       parameters:
         - in: query
           name: lon
@@ -60,7 +60,61 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/AltitudeResponse'
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+  /api/adminexpress:
+    get:
+      tags:
+        - admin-units
+      summary: Provides administrative units (french communes, departements, regions,...) for a location given by its longitude and latitude using ADMINEXPRESS.
+      description: |
+        Find the following french type of administrative units for a location given by its longitude and latitude :
+          * commune 
+          * canton
+          * collectivite_territoriale
+          * epci
+          * departement
+          * region 
+          * arrondissement
+      operationId: getAdminUnitsFromAdminExpress
+      parameters:
+        - in: query
+          name: lon
+          required: true
+          description: the longitude of a location
+          example: 6.869433
+          schema:
+            type: number
+        - in: query
+          name: lat
+          required: true
+          description: the latitude of a location
+          example: 45.923697
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminUnit'
+
+        '400':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '500':
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
 
 components:
@@ -77,6 +131,52 @@ components:
         message:
           type: string
           examples: ["Invalid request parameters"]
+    AdminUnit:
+      type: object
+      properties:
+        type:
+          type: string
+          description: The type of the administrative unit
+          examples: [commune, departement, region]
+        id:
+          type: string
+          description: The BDTOPO identifier
+          example: COMMUNE_0000000009750652
+        bbox:
+          schema:
+            $ref: '#/components/schemas/BoundingBox'
+        nom:
+          type: string
+          description: The name of the administrative unit
+          example: "Chamonix-Mont-Blanc"
+        nom_m:
+          type: string
+          description: The upper case name of the administrative unit
+          example: "CHAMONIX-MONT-BLANC"
+        insee_com:
+          type: string
+          description: INSEE code of the commune
+          example: "74056"
+        insee_dep:
+          type: string
+          description: INSEE code of the departement
+          example: "74"
+        insee_reg:
+          type: string
+          description: INSEE code of the region
+          example: "74"
+        statut:
+          type: string
+          description: Status of the commune
+          example: "Commune simple"
+        population:
+          type: number
+          description: Population of the commune (not available for departement and region)
+          example: 8642
+        # commune specific, not documented :
+        #"insee_can": "10",
+        #"insee_arr": "2",
+        #"siren_epci": "200023372"
     AltitudeResponse:
       type: object
       properties:
@@ -89,3 +189,28 @@ components:
         altitude:
           type: number
           description: The altitude of the point (output)
+    BoundingBox:
+      type: array
+      id: "http://geojson.org/schema/bbox"
+      title": "GeoJSON bounding box"
+      description: "Geo-spatial bounding box."
+      link: "https://tools.ietf.org/html/rfc7946#section-5"
+      minItems: 4
+      additionalItems: false
+      items:
+      - type: "number"
+        maximum: 180
+        minimum: -180
+        description: "West border of the bounding box"
+      - type: "number"
+        maximum: 90
+        minimum: -90
+        description: "South border of the bounding box"
+      - type: "number"
+        maximum: 180
+        minimum: -180
+        description: "East border of the bounding box"
+      - type: "number"
+        maximum: 90
+        minimum: -90
+        description: "North border of the bounding box"

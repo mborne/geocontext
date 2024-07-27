@@ -1,6 +1,6 @@
 services:
   geocontext:
-    image: ghcr.io/mborne/geocontext:master
+    image: geocontext
     build:
       context: .
       args:
