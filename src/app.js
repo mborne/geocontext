@@ -30,9 +30,9 @@ app.get('/health', function (req, res) {
     })
 });
 
-import { getAdminUnits, getAltitudeByLocation } from './services/geoplateforme.js';
+import { getAdminUnits, getAltitudeByLocation, getParcellaireExpress } from './services/geoplateforme.js';
 
-app.get('/api/altitude', [
+app.get('/api/gpf/altitude', [
     query("lon").notEmpty().isNumeric(),
     query("lat").notEmpty().isNumeric()
 ], async function (req, res) {
@@ -49,7 +49,7 @@ app.get('/api/altitude', [
     return res.json(result);
 });
 
-app.get('/api/adminexpress', [
+app.get('/api/gpf/adminexpress', [
     query("lon").notEmpty().isNumeric(),
     query("lat").notEmpty().isNumeric()
 ], async function (req, res) {
@@ -63,6 +63,24 @@ app.get('/api/adminexpress', [
 
     const params = matchedData(req);
     const result = await getAdminUnits(params.lon, params.lat);
+    return res.json(result);
+});
+
+
+app.get('/api/gpf/parcellaire-express', [
+    query("lon").notEmpty().isNumeric(),
+    query("lat").notEmpty().isNumeric()
+], async function (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).send({
+            message: "invalid parameters",
+            errors: errors.array()
+        });
+    }
+
+    const params = matchedData(req);
+    const result = await getParcellaireExpress(params.lon, params.lat);
     return res.json(result);
 });
 
