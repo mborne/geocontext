@@ -171,6 +171,56 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
 
 
+
+  /api/gpf/urbanisme:
+    get:
+      tags:
+        - urbanisme
+      summary: "Renvoie les informations du document d'urbanisme (PLU, POS, CC, PSMV) pour une position donnée par sa longitude et sa latitude à l'aide du WFS Géoplateforme (wfs_du et wfs_scot)."
+      description: |
+        Renvoie les informations du document d'urbanisme (PLU, POS, CC, PSMV) pour une position donnée par sa longitude et sa latitude à l'aide du WFS Géoplateforme (wfs_du et wfs_scot).
+      operationId: getGpfUrbanisme
+      parameters:
+        - in: query
+          name: lon
+          required: true
+          description: La longitude
+          example: 6.869433
+          schema:
+            type: number
+        - in: query
+          name: lat
+          required: true
+          description: La latitude
+          example: 45.923697
+          schema:
+            type: number
+      responses:
+        '200':
+          description: liste des éléments parcelles trouvées
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UrbanismeItem'
+
+        '400':
+          description: mauvaise requête
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BadRequestResponse'
+        '500':
+          description: erreur système
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+
+
+
 components:
   schemas:
     ErrorResponse:
@@ -296,6 +346,48 @@ components:
         - nom_com
         - code_dep
         - code_insee
+        - source
+
+
+    UrbanismeItem:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Identifiant technique de l'objet
+        type:
+          type: string
+          description: The type of the parcellaire express item.
+          enum:
+            - scot
+            - document
+            - info_pct
+            - info_lin
+            - info_surf
+            - prescription_pct
+            - prescription_lin
+            - prescription_surf
+        bbox:
+          schema:
+            $ref: '#/components/schemas/BoundingBox'
+        source:
+          type: string
+          example: Géoplateforme - (WFS Géoportail de l'Urbanisme)
+        gid:
+          type: number
+          description: Identifiant technique de l'objet
+          example: 2905619
+        gpu_doc_id:
+          type: string
+          description: Identifiant uniquement du document sur le GpU
+        partition:
+          type: string
+          description: Identifiant stable du document d'urbanisme sur le GpU
+          example: DU_74056
+      required:
+        - id
+        - type
+        - bbox
         - source
     AltitudeResponse:
       type: object

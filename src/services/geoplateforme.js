@@ -1,5 +1,7 @@
 import logger from '../logger.js';
 
+import distance from '../helpers/distance.js';
+
 /**
  * Get altitude for a given location.
  * 
@@ -74,7 +76,8 @@ const PARCELLAIRE_EXPRESS_TYPES = [
     'commune',
     'feuille',
     'parcelle',
-    'subdivision_fiscale'
+    'subdivision_fiscale',
+    'localisant'
 ];
 
 /**
@@ -86,13 +89,82 @@ const PARCELLAIRE_EXPRESS_TYPES = [
  */
 export async function getParcellaireExpress(lon, lat) {
     // note that EPSG:4326 means lat,lon order for GeoServer -> flipped coordinates...
-    const cql_filter = `INTERSECTS(geom,Point(${lat} ${lon}))`;
+    const cql_filter = `DWITHIN(geom,Point(${lat} ${lon}),10,meters)`;
+
+    const sourceGeom = {
+        "type": "Point",
+        "coordinates": [lon,lat]
+    };
 
     // TODO : avoid useless geometry retrieval at WFS level
     const url = 'https://data.geopf.fr/wfs?' + new URLSearchParams({
         service: 'WFS',
         request: 'GetFeature',
         typeName: PARCELLAIRE_EXPRESS_TYPES.map((type) => { return `CADASTRALPARCELS.PARCELLAIRE_EXPRESS:${type}` }).join(','),
+        outputFormat: 'application/json',
+        cql_filter: cql_filter
+    }).toString();
+
+    logger.info(`[HTTP-GET] ${url} ...`);
+
+    
+    const featureCollection = await fetch(url).then(res => res.json());
+    return featureCollection.features.map((feature) => {
+        // parse type from id (ex: "commune.3837")
+        const type = feature.id.split('.')[0];
+        // ignore geometry and extend properties
+        return Object.assign({
+            type: type,
+            id: feature.id,
+            bbox: feature.bbox,
+            distance: distance(
+                sourceGeom,
+                feature.geometry
+            ),
+            source: "Géoplateforme (WFS, CADASTRALPARCELS.PARCELLAIRE_EXPRESS)",
+        }, feature.properties);
+    });
+}
+
+
+
+
+// CADASTRALPARCELS.PARCELLAIRE_EXPRESS:
+// https://data.geopf.fr/wfs/ows?service=WFS&version=2.0.0&request=GetCapabilities
+const URBANISME_TYPES = [
+    'wfs_scot:scot',
+    'wfs_du:document', 
+    'wfs_du:info_pct',
+    'wfs_du:info_lin',
+    'wfs_du:info_surf',
+    'wfs_du:prescription_pct',
+    'wfs_du:prescription_lin',
+    'wfs_du:prescription_surf'
+];
+
+
+
+/**
+ * Get urbanism infos for a given location
+ *
+ * @param {number} lon 
+ * @param {number} lat 
+ * @returns 
+ */
+export async function getUrbanisme(lon, lat) {
+    // note that EPSG:4326 means lat,lon order for GeoServer -> flipped coordinates...
+    const cql_filter = `DWITHIN(the_geom,Point(${lat} ${lon}),30,meters)`;
+
+    const sourceGeom = {
+        "type": "Point",
+        "coordinates": [lon,lat]
+    };
+
+    // TODO : avoid useless geometry retrieval at WFS level
+    const url = 'https://data.geopf.fr/wfs?' + new URLSearchParams({
+        service: 'WFS',
+        request: 'GetFeature',
+        typeName: URBANISME_TYPES.join(','),
         outputFormat: 'application/json',
         cql_filter: cql_filter
     }).toString();
@@ -108,7 +180,11 @@ export async function getParcellaireExpress(lon, lat) {
             type: type,
             id: feature.id,
             bbox: feature.bbox,
-            source: "Géoplateforme (WFS, CADASTRALPARCELS.PARCELLAIRE_EXPRESS)",
+            distance: distance(
+                sourceGeom,
+                feature.geometry
+            ),
+            source: "Géoplateforme - (WFS Géoportail de l'Urbanisme)",
         }, feature.properties);
     });
 }
