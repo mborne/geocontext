@@ -23,9 +23,14 @@
   },
   "homepage": "https://github.com/mborne/geocontext#readme",
   "dependencies": {
+    "@turf/boolean-point-in-polygon": "^7.0.0",
+    "@turf/distance": "^7.0.0",
+    "@turf/point-to-line-distance": "^7.0.0",
+    "@turf/turf": "^7.0.0",
     "cors": "^2.8.5",
     "express": "^4.19.2",
     "express-validator": "^7.1.0",
+    "jsts": "^2.11.3",
     "morgan": "^1.10.0",
     "winston": "^3.13.1"
   }
