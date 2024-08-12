@@ -85,7 +85,7 @@ app.get('/api/gpf/parcellaire-express', [
 });
 
 
-app.get('/api/gpf/urbanisme', [
+app.get('/api/gpu/urbanisme', [
     query("lon").notEmpty().isNumeric(),
     query("lat").notEmpty().isNumeric()
 ], async function (req, res) {

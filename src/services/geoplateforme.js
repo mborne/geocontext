@@ -2,6 +2,7 @@ import logger from '../logger.js';
 
 import distance from '../helpers/distance.js';
 
+
 /**
  * Get altitude for a given location.
  * 
@@ -108,7 +109,14 @@ export async function getParcellaireExpress(lon, lat) {
     logger.info(`[HTTP-GET] ${url} ...`);
 
     
-    const featureCollection = await fetch(url).then(res => res.json());
+    const featureCollection = await fetch(url,{
+        headers: new Headers({
+            "Accept"       : "application/json",
+            "Content-Type" : "application/json",
+            "User-Agent"   : "geocontext",
+            "Referer": "https://github.com/mborne/geocontext"
+        })
+    }).then(res => res.json());
     return featureCollection.features.map((feature) => {
         // parse type from id (ex: "commune.3837")
         const type = feature.id.split('.')[0];
