@@ -1,6 +1,6 @@
 {
   "name": "geocontext",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "An experimental API providing spatial context for LLM",
   "main": "index.js",
   "type": "module",
@@ -31,6 +31,7 @@
     "express": "^4.19.2",
     "express-validator": "^7.1.0",
     "jsts": "^2.11.3",
+    "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "winston": "^3.13.1"
   }

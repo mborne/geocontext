@@ -2,6 +2,7 @@ import logger from '../logger.js';
 
 import distance from '../helpers/distance.js';
 
+import _ from 'lodash';
 
 /**
  * Get altitude for a given location.
@@ -81,6 +82,27 @@ const PARCELLAIRE_EXPRESS_TYPES = [
     'localisant'
 ];
 
+
+/**
+ * Filter items by distance keeping the nearest by type.
+ * @param {array<object>} items 
+ * @returns {array<object>}
+ */
+function filterByDistance(items){
+    const sortedItems = _.orderBy(items, ['type', 'distance'], ['asc', 'desc']);
+    const result = [];
+    let lastType = null;
+    for ( const item of sortedItems ){
+        if ( lastType == item.type ){
+            continue;
+        }
+        result.push(item);
+        lastType = item.type;
+    }
+    return result;
+}
+
+
 /**
  * Get administrative units (commune, departement,...) intersecting a given location
  *
@@ -117,7 +139,9 @@ export async function getParcellaireExpress(lon, lat) {
             "Referer": "https://github.com/mborne/geocontext"
         })
     }).then(res => res.json());
-    return featureCollection.features.map((feature) => {
+
+
+    return filterByDistance(featureCollection.features.map((feature) => {
         // parse type from id (ex: "commune.3837")
         const type = feature.id.split('.')[0];
         // ignore geometry and extend properties
@@ -131,9 +155,8 @@ export async function getParcellaireExpress(lon, lat) {
             ),
             source: "Géoplateforme (WFS, CADASTRALPARCELS.PARCELLAIRE_EXPRESS)",
         }, feature.properties);
-    });
+    }));
 }
-
 
 
 
