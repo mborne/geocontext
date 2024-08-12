@@ -6,7 +6,7 @@ info:
   license:
     name: MIT
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  version: 0.3.0
+  version: 0.3.1
 
 #servers:
 #  - url: https://geocontext.quadtreeworld.net
@@ -129,12 +129,12 @@ paths:
       summary: "Renvoie les informations cadastrales pour une position donnée par sa longitude et sa latitude à l'aide du WFS Géoplateforme (CADASTRALPARCELS.PARCELLAIRE_EXPRESS)."
       description: |
         Renvoie les types ci-après correspondant à la position :
-          * arrondissement : L'arrondissement municipal (Paris, Lyon et Marseille uniquement)
-          * commune : La commune
-          * feuille : La feuille, la planche ou la division cadastrale
-          * localisant : Un localisant parcellaire
-          * parcelle : La parcelle
-          * subdivision_fiscale : La subdivision fiscale
+          * arrondissement (Paris, Lyon et Marseille uniquement)
+          * commune
+          * feuille
+          * localisant
+          * parcelle
+          * subdivision_fiscale
       operationId: getParcellaireExpress
       parameters:
         - in: query
