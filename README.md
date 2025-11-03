@@ -1,6 +1,6 @@
 # geocontext
 
-> **ATTENTION : migration en cours en [ignfab/geocontext](https://github.com/ignfab/geocontext)**
+> **ATTENTION : migré en [ignfab/geocontext](https://github.com/ignfab/geocontext)**
 
 Un serveur MCP expérimental fournissant du contexte spatial pour les LLM.
 
@@ -194,6 +194,7 @@ mcp add tool gpf_wmts_layers
 ## Licence
 
 [MIT](LICENSE)
+
 
 
 
