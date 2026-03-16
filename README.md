@@ -1,6 +1,6 @@
 # geocontext
 
-> **ATTENTION : migré en [ignfab/geocontext](https://github.com/ignfab/geocontext)**
+> **WARNING : moved to [ignfab/geocontext](https://github.com/ignfab/geocontext)**
 
 Un serveur MCP expérimental fournissant du contexte spatial pour les LLM.
 
